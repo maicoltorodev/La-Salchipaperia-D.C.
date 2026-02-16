@@ -7,7 +7,7 @@ const testimonials = [
     id: 1,
     name: "Maria Gonzalez",
     location: "Miraflores",
-    text: "Las mejores salchipapas que he probado en mi vida. La Premium Gold es adictiva, el queso fundido con la salsa trufa es otra cosa.",
+    text: "Las mejores que he probado en mi vida. La Premium Gold es adictiva, el queso fundido con la salsa trufa es otra cosa.",
     rating: 5,
   },
   {

@@ -6,7 +6,7 @@ const items = [
   "Papas Crujientes",
   "Salchichas Premium",
   "Salsas Artesanales",
-  "Bogota + Miami",
+  "Bogota - Miami",
   "Proximamente Medellin",
   "Delivery Disponible",
   "Street Food Premium",
