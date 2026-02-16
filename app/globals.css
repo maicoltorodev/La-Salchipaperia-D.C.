@@ -131,7 +131,8 @@
   }
 
   .glass-card {
-    @apply bg-white/5 backdrop-blur-md border border-white/10 shadow-[0_8px_32px_0_rgba(0, 0, 0, 0.37)];
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   }
 
   .no-scrollbar::-webkit-scrollbar {
