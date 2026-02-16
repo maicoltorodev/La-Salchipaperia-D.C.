@@ -3,13 +3,27 @@
 import { useState } from "react"
 import { MapPin, Clock, Phone, ChevronRight, Navigation, Plane, Rocket, Crosshair, AlertCircle } from "lucide-react"
 
-const bogotaLocations = [
+interface Location {
+  id: number
+  name: string
+  address: string
+  hours: string
+  phone: string
+  whatsapp: string
+  tag: string | null
+  flag?: string
+  lat: number
+  lng: number
+}
+
+const bogotaLocations: Location[] = [
   {
     id: 1,
     name: "Chapinero",
     address: "Cl. 67 #8-29, Bogotá, Colombia",
     hours: "Lun - Dom: 11:00 AM - 11:00 PM",
-    phone: "+57 601 000 0001",
+    phone: "+57 300 594 6797",
+    whatsapp: "https://wa.me/573005946797",
     tag: null,
     lat: 4.6486,
     lng: -74.0620
@@ -19,7 +33,8 @@ const bogotaLocations = [
     name: "Modelia",
     address: "Av. La Esperanza #75-10, Fontibón, Bogotá, Colombia",
     hours: "Lun - Dom: 11:00 AM - 10:00 PM",
-    phone: "+57 601 000 0002",
+    phone: "+57 300 462 9923",
+    whatsapp: "https://wa.me/573004629923",
     tag: null,
     lat: 4.6644,
     lng: -74.1162
@@ -29,7 +44,8 @@ const bogotaLocations = [
     name: "Montes",
     address: "Cl. 8 Sur #32-35, Bogotá, Colombia",
     hours: "Lun - Dom: 11:00 AM - 10:00 PM",
-    phone: "+57 601 000 0003",
+    phone: "+57 302 464 8661",
+    whatsapp: "https://wa.me/573024648661",
     tag: null,
     lat: 4.6033,
     lng: -74.1077
@@ -39,7 +55,8 @@ const bogotaLocations = [
     name: "Suba",
     address: "Cl. 139 # 92A-3, Suba, Bogotá, D.C",
     hours: "Lun - Dom: 11:00 AM - 10:00 PM",
-    phone: "+57 601 000 0004",
+    phone: "+57 302 216 3725",
+    whatsapp: "https://wa.me/573022163725",
     tag: null,
     lat: 4.7351,
     lng: -74.0952
@@ -49,7 +66,8 @@ const bogotaLocations = [
     name: "Bosa",
     address: "Cl. 68 Sur #78 j - 74, Bogotá",
     hours: "Lun - Dom: 11:00 AM - 10:00 PM",
-    phone: "+57 601 000 0005",
+    phone: "+57 324 228 7574",
+    whatsapp: "https://wa.me/573242287574",
     tag: null,
     lat: 4.6136,
     lng: -74.1947
@@ -59,7 +77,8 @@ const bogotaLocations = [
     name: "Kennedy",
     address: "Cra. 78B #38C, Kennedy, Bogotá, Colombia",
     hours: "Lun - Dom: 11:00 AM - 10:00 PM",
-    phone: "+57 601 000 0006",
+    phone: "+57 322 300 4583",
+    whatsapp: "https://wa.me/573223004583",
     tag: null,
     lat: 4.6346,
     lng: -74.1565
@@ -69,7 +88,8 @@ const bogotaLocations = [
     name: "Diver Plaza",
     address: "Dg. 72 #98-36, Bogotá, Colombia",
     hours: "Lun - Dom: 11:00 AM - 10:00 PM",
-    phone: "+57 601 000 0007",
+    phone: "+57 301 793 1079",
+    whatsapp: "https://wa.me/573017931079",
     tag: null,
     lat: 4.7066,
     lng: -74.1227
@@ -79,7 +99,8 @@ const bogotaLocations = [
     name: "Villa del Prado",
     address: "Cl. 174a #54C - 06, Bogotá",
     hours: "Lun - Dom: 11:00 AM - 10:00 PM",
-    phone: "+57 601 000 0008",
+    phone: "+57 313 486 7097",
+    whatsapp: "https://wa.me/573134867097",
     tag: null,
     lat: 4.7548,
     lng: -74.0535
@@ -89,20 +110,22 @@ const bogotaLocations = [
     name: "Centro",
     address: "Cra. 7 #19-03, Bogotá, Colombia",
     hours: "Lun - Dom: 10:00 AM - 10:00 PM",
-    phone: "+57 601 000 0009",
+    phone: "+57 322 355 1610",
+    whatsapp: "https://wa.me/573223551610",
     tag: null,
     lat: 4.6038,
     lng: -74.0722
   },
 ]
 
-const internationalLocations = [
+const internationalLocations: Location[] = [
   {
     id: 10,
     name: "Miami",
     address: "Miami, Florida, USA",
     hours: "Mon - Sun: 11:00 AM - 10:00 PM",
     phone: "+1 305 000 0000",
+    whatsapp: "https://wa.me/13050000000",
     tag: "international",
     flag: "US",
     lat: 25.7617,
@@ -117,19 +140,6 @@ const comingSoon = [
     tag: "proximamente",
   },
 ]
-
-
-interface Location {
-  id: number
-  name: string
-  address: string
-  hours: string
-  phone: string
-  tag: string | null
-  flag?: string
-  lat: number
-  lng: number
-}
 
 // 10km coverage radius
 const MAX_DISTANCE_KM = 10;
@@ -169,9 +179,9 @@ export function LocationsSection() {
         })
 
         if (closestLocation && minDistance <= MAX_DISTANCE_KM) {
-          setActiveLocation(closestLocation)
+          setActiveLocation(closestLocation as Location)
           setNearestInfo({
-            id: closestLocation.id,
+            id: (closestLocation as Location).id,
             distance: parseFloat(minDistance.toFixed(1)),
           })
         } else {
@@ -435,15 +445,28 @@ export function LocationsSection() {
               />
             </div>
 
-            <a
-              href={`https://maps.google.com/?q=${encodeURIComponent("Salchipaperia D.C. " + activeLocation.address)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.02] glow-yellow"
-            >
-              <Navigation className="h-4 w-4" />
-              Como Llegar
-            </a>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <a
+                href={activeLocation.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-1 items-center justify-center gap-2 rounded-full bg-green-600 py-3 text-sm font-bold text-white transition-all duration-300 hover:scale-[1.02] hover:bg-green-700 glow-green"
+              >
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20">
+                  <Phone className="h-3 w-3 fill-white" />
+                </div>
+                Pedir por WhatsApp
+              </a>
+              <a
+                href={`https://maps.google.com/?q=${encodeURIComponent("Salchipaperia D.C. " + activeLocation.address)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-1 items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.02] glow-yellow"
+              >
+                <Navigation className="h-4 w-4" />
+                Cómo Llegar
+              </a>
+            </div>
           </div>
         </div>
       </div>

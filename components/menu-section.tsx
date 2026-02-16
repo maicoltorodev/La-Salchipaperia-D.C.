@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import {
   Flame,
   Star,
@@ -17,7 +17,10 @@ import {
   Salad,
   GlassWater,
   Beer,
+  ShoppingBag,
 } from "lucide-react"
+
+import { useCart } from "@/context/cart-context"
 
 /* ─── Data Types ─── */
 interface MenuItem {
@@ -543,42 +546,58 @@ export function MenuSection() {
     : []
   const hasMore = (activeData?.items.length ?? 0) > INITIAL_SHOW
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible")
+          }
+        })
+      },
+      { threshold: 0.05 }
+    )
+
+    const reveals = containerRef.current?.querySelectorAll(".scroll-reveal")
+    reveals?.forEach((el) => observer.observe(el))
+
+    return () => observer.disconnect()
+  }, [activeCategory, showAll])
+
+  const { addItem, totalItems, setIsCartOpen } = useCart()
+  const containerRef = useRef<HTMLElement>(null)
+
   return (
-    <section id="menu" className="bg-background py-24 md:py-32">
+    <section id="menu" ref={containerRef} className="relative overflow-hidden bg-background py-24 md:py-32">
+      {/* Background decoration */}
+      <div className="pointer-events-none absolute top-0 left-0 h-full w-full opacity-[0.03]">
+        <div className="absolute top-[10%] left-[5%] h-64 w-64 animate-rotate-slow rounded-full bg-primary blur-3xl" />
+        <div className="absolute top-[40%] right-[5%] h-64 w-64 animate-rotate-slow rounded-full bg-accent blur-3xl" style={{ animationDirection: 'reverse' }} />
+      </div>
+
       <div className="mx-auto max-w-7xl px-6">
         {/* Section Header */}
-        <div className="mb-16 flex flex-col items-center text-center">
+        <div className="scroll-reveal mb-16 flex flex-col items-center text-center">
           <div className="mb-4 flex items-center gap-2">
             <Flame className="h-5 w-5 text-primary" />
-            <span className="text-sm font-semibold tracking-widest text-primary uppercase">
+            <span className="text-[10px] font-bold tracking-[0.4em] text-primary uppercase">
               Nuestra Carta
             </span>
             <Flame className="h-5 w-5 text-primary" />
           </div>
-          <h2 className="mb-4 text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
-            <span className="text-balance">
-              {"Sabores que "}
-              <span className="text-gradient">Enamoran</span>
-            </span>
+          <h2 className="mb-6 text-4xl font-black tracking-tighter text-foreground sm:text-6xl md:text-7xl">
+            Sabores que <span className="text-gradient drop-shadow-[0_0_20px_rgba(245,197,24,0.3)]">Enamoran</span>
           </h2>
-          <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            {
-              "Cada preparacion es una obra de arte. Ingredientes seleccionados y combinaciones unicas que redefinen el street food."
-            }
+          <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+            {"Cada preparación es una obra de arte. Ingredientes seleccionados y combinaciones únicas que redefinen el street food premium."}
           </p>
-          <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-2">
-            <Sparkles className="h-4 w-4 text-accent" />
-            <span className="text-sm font-medium text-foreground">
-              {totalItems} productos en {menuData.length} categorias
-            </span>
-          </div>
         </div>
 
-        {/* Category Tabs - Scrollable */}
-        <div className="relative mb-12">
+        {/* Category Tabs - Ultra Mobile Optimized */}
+        <div className="scroll-reveal relative mb-16" style={{ transitionDelay: '200ms' }}>
           <div
             ref={tabsRef}
-            className="no-scrollbar flex gap-2 overflow-x-auto px-1 pb-2 sm:flex-wrap sm:justify-center sm:overflow-visible"
+            className="no-scrollbar flex gap-3 overflow-x-auto px-1 pb-4 sm:flex-wrap sm:justify-center sm:overflow-visible"
           >
             {menuData.map((cat) => (
               <button
@@ -587,44 +606,38 @@ export function MenuSection() {
                   setActiveCategory(cat.id)
                   setExpandedItems({})
                 }}
-                className={`flex shrink-0 items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-all duration-300 ${
-                  activeCategory === cat.id
-                    ? "bg-primary text-primary-foreground glow-yellow"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                }`}
-              >
-                {cat.icon}
-                <span className="hidden min-[480px]:inline">{cat.label}</span>
-                <span className="min-[480px]:hidden">
-                  {cat.label.length > 10
-                    ? cat.label.slice(0, 8) + "..."
-                    : cat.label}
-                </span>
-                <span
-                  className={`ml-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
-                    activeCategory === cat.id
-                      ? "bg-background/20 text-primary-foreground"
-                      : "bg-background/10 text-muted-foreground"
+                className={`flex shrink-0 items-center gap-3 rounded-[1.2rem] px-6 py-3.5 text-xs font-black tracking-wider uppercase transition-all duration-300 ${activeCategory === cat.id
+                  ? "bg-primary text-primary-foreground shadow-[0_10px_30px_rgba(245,197,24,0.4)] scale-105"
+                  : "glass-card text-muted-foreground hover:bg-white/10"
                   }`}
-                >
+              >
+                <div className={`${activeCategory === cat.id ? 'text-primary-foreground' : 'text-primary'}`}>
+                  {cat.icon}
+                </div>
+                <span>{cat.label}</span>
+                <span className={`ml-1 rounded-full px-2 py-0.5 text-[10px] ${activeCategory === cat.id ? 'bg-black/20' : 'bg-primary/10 text-primary'
+                  }`}>
                   {cat.items.length}
                 </span>
               </button>
             ))}
           </div>
+          {/* Mobile indicator shadows */}
+          <div className="pointer-events-none absolute top-0 left-0 h-full w-8 bg-gradient-to-r from-background to-transparent sm:hidden" />
+          <div className="pointer-events-none absolute top-0 right-0 h-full w-8 bg-gradient-to-l from-background to-transparent sm:hidden" />
         </div>
 
         {/* Active Category Header */}
         {activeData && (
-          <div className="mb-8 flex flex-col items-center gap-2 text-center">
-            <h3 className="text-2xl font-bold text-foreground md:text-3xl">
+          <div className="scroll-reveal mb-12 flex flex-col items-center gap-3 text-center" style={{ transitionDelay: '300ms' }}>
+            <h3 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
               {activeData.label}
             </h3>
-            <p className="text-muted-foreground">{activeData.subtitle}</p>
+            <p className="max-w-xl text-sm italic text-muted-foreground">{activeData.subtitle}</p>
             {activeData.note && (
-              <div className="mt-2 inline-flex max-w-xl items-center gap-2 rounded-xl bg-primary/10 px-4 py-2 text-center">
-                <UtensilsCrossed className="h-3.5 w-3.5 shrink-0 text-primary" />
-                <span className="text-xs leading-relaxed font-medium text-primary">
+              <div className="glass-card mt-2 inline-flex items-center gap-2 rounded-2xl px-5 py-2.5">
+                <UtensilsCrossed className="h-4 w-4 text-primary" />
+                <span className="text-[11px] font-bold text-foreground uppercase tracking-widest">
                   {activeData.note}
                 </span>
               </div>
@@ -632,65 +645,66 @@ export function MenuSection() {
           </div>
         )}
 
-        {/* Menu Grid */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Menu Grid - Highly Animated */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {displayItems.map((item, idx) => (
             <div
               key={item.id}
-              className="group relative flex flex-col overflow-hidden rounded-2xl bg-card transition-all duration-500 hover:scale-[1.02] sparkle-border"
-              style={{ animationDelay: `${idx * 40}ms` }}
+              className="scroll-reveal glass-card group relative flex flex-col overflow-hidden rounded-[2rem] p-6 transition-all duration-500 hover:scale-[1.03] hover:bg-white/10"
+              style={{ transitionDelay: `${idx * 50}ms` }}
             >
               {/* Top row: Badge + Price */}
-              <div className="flex items-center justify-between px-5 pt-5">
-                {item.badge ? (
-                  <span
-                    className={`flex items-center gap-1 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide ${item.badgeColor}`}
-                  >
-                    {(item.badge === "Best Seller" ||
-                      item.badge === "Top" ||
-                      item.badge === "Popular") && (
-                      <Star className="h-3 w-3" />
-                    )}
-                    {(item.badge === "Nuevo" ||
-                      item.badge === "La Reina" ||
-                      item.badge === "Show" ||
-                      item.badge === "Artesanal") && (
-                      <Sparkles className="h-3 w-3" />
-                    )}
-                    {item.badge}
-                  </span>
-                ) : (
-                  <span />
-                )}
-                <span className="text-lg font-bold text-primary">
+              <div className="mb-6 flex items-center justify-between">
+                {item.id % 2 === 0 ? (
+                  <div className="flex -space-x-1">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="h-1 w-4 rounded-full bg-primary/20" />
+                    ))}
+                  </div>
+                ) : <div />}
+
+                <span className="text-xl font-black tracking-tighter text-primary sm:text-2xl">
                   {item.price}
                 </span>
               </div>
 
               {/* Content */}
-              <div className="flex flex-1 flex-col px-5 pt-3 pb-5">
-                <h4 className="mb-2 text-lg font-bold text-foreground transition-colors duration-300 group-hover:text-primary">
-                  {item.name}
-                </h4>
-                <p className="flex-1 text-sm leading-relaxed text-muted-foreground">
+              <div className="flex flex-1 flex-col">
+                <div className="mb-2 flex items-center gap-2">
+                  <h4 className="text-xl font-black tracking-tight text-foreground group-hover:text-primary transition-colors">
+                    {item.name}
+                  </h4>
+                  {item.badge && (
+                    <span className={`rounded-full px-2 py-0.5 text-[8px] font-black uppercase ${item.badgeColor}`}>
+                      {item.badge}
+                    </span>
+                  )}
+                </div>
+                <p className="mb-6 flex-1 text-sm leading-relaxed text-muted-foreground/80">
                   {item.description}
                 </p>
 
-                {/* Decorative bottom line */}
-                <div className="mt-4 h-[2px] w-full overflow-hidden rounded-full bg-secondary">
-                  <div className="h-full w-0 bg-gradient-to-r from-primary to-accent transition-all duration-500 group-hover:w-full" />
-                </div>
+                <button
+                  onClick={() => addItem(item)}
+                  className="flex w-full items-center justify-center gap-2 rounded-[1rem] bg-secondary/50 py-3 text-xs font-black uppercase tracking-widest text-foreground transition-all duration-300 hover:bg-primary hover:text-primary-foreground group-active:scale-95"
+                >
+                  <Plus className="h-4 w-4" />
+                  Lo quiero
+                </button>
               </div>
+
+              {/* Decorative accent */}
+              <div className="absolute top-0 right-0 h-16 w-16 bg-gradient-to-br from-primary/10 to-transparent blur-2xl" />
             </div>
           ))}
         </div>
 
-        {/* Show More / Less */}
+        {/* Show More Actions */}
         {hasMore && (
-          <div className="mt-10 flex justify-center">
+          <div className="scroll-reveal mt-16 flex flex-col items-center gap-4 transition-all duration-1000" style={{ transitionDelay: '400ms' }}>
             <button
               onClick={() => toggleExpand(activeCategory)}
-              className="flex items-center gap-2 rounded-full bg-secondary px-8 py-3 text-sm font-semibold text-secondary-foreground transition-all duration-300 hover:bg-primary hover:text-primary-foreground"
+              className="glow-yellow flex items-center gap-3 rounded-full bg-primary px-10 py-5 text-sm font-black uppercase tracking-widest text-primary-foreground transition-all duration-300 hover:scale-105 active:scale-95"
             >
               {showAll ? (
                 <>
@@ -698,33 +712,39 @@ export function MenuSection() {
                 </>
               ) : (
                 <>
-                  {"Ver Todos ("}
-                  {(activeData?.items.length ?? 0) - INITIAL_SHOW}
-                  {" mas)"} <ChevronDown className="h-4 w-4" />
+                  Ver Todos los {(activeData?.items.length ?? 0)} platos <Plus className="h-4 w-4" />
                 </>
               )}
             </button>
+            <p className="text-xs font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">
+              Mostrando {displayItems.length} de {activeData?.items.length}
+            </p>
           </div>
         )}
-
-        {/* Item Count */}
-        <div className="mt-8 flex justify-center">
-          <p className="text-sm text-muted-foreground">
-            {"Mostrando "}
-            <span className="font-semibold text-foreground">
-              {displayItems.length}
-            </span>
-            {" de "}
-            <span className="font-semibold text-foreground">
-              {activeData?.items.length ?? 0}
-            </span>
-            {" productos en "}
-            <span className="font-semibold text-primary">
-              {activeData?.label}
-            </span>
-          </p>
-        </div>
+        {/* Floating Cart integration */}
+        <FloatingCart totalItems={totalItems} setIsCartOpen={setIsCartOpen} />
       </div>
     </section>
+  )
+}
+
+function FloatingCart({ totalItems, setIsCartOpen }: { totalItems: number, setIsCartOpen: (v: boolean) => void }) {
+  if (totalItems === 0) return null
+
+  return (
+    <button
+      onClick={() => setIsCartOpen(true)}
+      className="fixed bottom-8 left-1/2 z-[60] flex -translate-x-1/2 items-center gap-3 rounded-full bg-primary px-8 py-4 shadow-[0_20px_50px_rgba(245,197,24,0.4)] transition-all duration-500 hover:scale-105 hover:bg-primary/90 glow-yellow animate-in fade-in slide-in-from-bottom-10"
+    >
+      <div className="relative">
+        <ShoppingBag className="h-6 w-6 text-primary-foreground" />
+        <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[10px] font-black text-accent-foreground ring-2 ring-primary">
+          {totalItems}
+        </span>
+      </div>
+      <span className="text-sm font-black uppercase tracking-widest text-primary-foreground">
+        Ver mi pedido
+      </span>
+    </button>
   )
 }

@@ -21,11 +21,8 @@ export const metadata: Metadata = {
     "Salchipaperia D.C. La experiencia premium de salchipapas. 9 sedes en Bogota, Miami y proximamente Medellin.",
   generator: 'v0.app',
   icons: {
-    icon: [
-      {
-        url: '/images/logo.jpg',
-      },
-    ],
+    icon: '/favicon.ico',
+    apple: '/apple-icon.png',
   },
 }
 
@@ -34,6 +31,10 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
 }
+
+import { CartProvider } from '@/context/cart-context'
+import { OrderWizard } from '@/components/ui/order-wizard'
+import { CustomCursor } from '@/components/ui/custom-cursor'
 
 export default function RootLayout({
   children,
@@ -45,7 +46,11 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} ${inter.variable} font-sans antialiased`}
       >
-        {children}
+        <CartProvider>
+          <OrderWizard />
+          <CustomCursor />
+          {children}
+        </CartProvider>
         <Analytics />
       </body>
     </html>
