@@ -26,11 +26,10 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
           ? "bg-background/90 backdrop-blur-xl border-b border-border"
           : "bg-transparent"
-      }`}
+        }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <a href="#inicio" className="flex items-center gap-3">
@@ -64,7 +63,7 @@ export function Navbar() {
             className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary"
           >
             <MapPin className="h-4 w-4" />
-            <span>7+ Sedes</span>
+            <span>10+ Sedes</span>
           </a>
           <a
             href="tel:+51999999999"
@@ -86,9 +85,8 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className={`overflow-hidden transition-all duration-500 md:hidden ${
-          isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-        }`}
+        className={`overflow-hidden transition-all duration-500 md:hidden ${isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          }`}
       >
         <div className="border-t border-border bg-background/95 px-6 py-6 backdrop-blur-xl">
           <nav className="flex flex-col gap-4">

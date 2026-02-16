@@ -1,80 +1,98 @@
 "use client"
 
 import { useState } from "react"
-import { MapPin, Clock, Phone, ChevronRight, Navigation, Plane, Rocket } from "lucide-react"
+import { MapPin, Clock, Phone, ChevronRight, Navigation, Plane, Rocket, Crosshair, AlertCircle } from "lucide-react"
 
 const bogotaLocations = [
   {
     id: 1,
     name: "Chapinero",
-    address: "Chapinero, Bogota D.C.",
+    address: "Cl. 67 #8-29, Bogotá, Colombia",
     hours: "Lun - Dom: 11:00 AM - 11:00 PM",
     phone: "+57 601 000 0001",
     tag: null,
+    lat: 4.6486,
+    lng: -74.0620
   },
   {
     id: 2,
     name: "Modelia",
-    address: "Modelia, Bogota D.C.",
+    address: "Av. La Esperanza #75-10, Fontibón, Bogotá, Colombia",
     hours: "Lun - Dom: 11:00 AM - 10:00 PM",
     phone: "+57 601 000 0002",
     tag: null,
+    lat: 4.6644,
+    lng: -74.1162
   },
   {
     id: 3,
     name: "Montes",
-    address: "Montes, Bogota D.C.",
+    address: "Cl. 8 Sur #32-35, Bogotá, Colombia",
     hours: "Lun - Dom: 11:00 AM - 10:00 PM",
     phone: "+57 601 000 0003",
     tag: null,
+    lat: 4.6033,
+    lng: -74.1077
   },
   {
     id: 4,
     name: "Suba",
-    address: "Suba, Bogota D.C.",
+    address: "Cl. 139 # 92A-3, Suba, Bogotá, D.C",
     hours: "Lun - Dom: 11:00 AM - 10:00 PM",
     phone: "+57 601 000 0004",
     tag: null,
+    lat: 4.7351,
+    lng: -74.0952
   },
   {
     id: 5,
     name: "Bosa",
-    address: "Bosa, Bogota D.C.",
+    address: "Cl. 68 Sur #78 j - 74, Bogotá",
     hours: "Lun - Dom: 11:00 AM - 10:00 PM",
     phone: "+57 601 000 0005",
     tag: null,
+    lat: 4.6136,
+    lng: -74.1947
   },
   {
     id: 6,
     name: "Kennedy",
-    address: "Kennedy, Bogota D.C.",
+    address: "Cra. 78B #38C, Kennedy, Bogotá, Colombia",
     hours: "Lun - Dom: 11:00 AM - 10:00 PM",
     phone: "+57 601 000 0006",
     tag: null,
+    lat: 4.6346,
+    lng: -74.1565
   },
   {
     id: 7,
-    name: "Alamos",
-    address: "Alamos, Bogota D.C.",
+    name: "Diver Plaza",
+    address: "Dg. 72 #98-36, Bogotá, Colombia",
     hours: "Lun - Dom: 11:00 AM - 10:00 PM",
     phone: "+57 601 000 0007",
     tag: null,
+    lat: 4.7066,
+    lng: -74.1227
   },
   {
     id: 8,
     name: "Villa del Prado",
-    address: "Villa del Prado, Bogota D.C.",
+    address: "Cl. 174a #54C - 06, Bogotá",
     hours: "Lun - Dom: 11:00 AM - 10:00 PM",
     phone: "+57 601 000 0008",
     tag: null,
+    lat: 4.7548,
+    lng: -74.0535
   },
   {
     id: 9,
     name: "Centro",
-    address: "Centro Historico, Bogota D.C.",
+    address: "Cra. 7 #19-03, Bogotá, Colombia",
     hours: "Lun - Dom: 10:00 AM - 10:00 PM",
     phone: "+57 601 000 0009",
     tag: null,
+    lat: 4.6038,
+    lng: -74.0722
   },
 ]
 
@@ -87,6 +105,8 @@ const internationalLocations = [
     phone: "+1 305 000 0000",
     tag: "international",
     flag: "US",
+    lat: 25.7617,
+    lng: -80.1918
   },
 ]
 
@@ -98,11 +118,120 @@ const comingSoon = [
   },
 ]
 
-type Location = (typeof bogotaLocations)[number]
+
+interface Location {
+  id: number
+  name: string
+  address: string
+  hours: string
+  phone: string
+  tag: string | null
+  flag?: string
+  lat: number
+  lng: number
+}
+
+// 10km coverage radius
+const MAX_DISTANCE_KM = 10;
 
 export function LocationsSection() {
   const allLocations = [...bogotaLocations, ...internationalLocations]
   const [activeLocation, setActiveLocation] = useState<Location>(allLocations[0])
+  const [isSearching, setIsSearching] = useState(false)
+  const [locationError, setLocationError] = useState<string | null>(null)
+  const [nearestInfo, setNearestInfo] = useState<{ id: number; distance: number } | null>(null)
+
+  const findNearestLocation = () => {
+    setIsSearching(true)
+    setLocationError(null)
+    setNearestInfo(null)
+
+    if (!navigator.geolocation) {
+      setLocationError("Tu navegador no soporta geolocalización.")
+      setIsSearching(false)
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude: userLat, longitude: userLng } = position.coords
+
+        // Find nearest location logic
+        let closestLocation: Location | null = null
+        let minDistance = Infinity
+
+        allLocations.forEach((location) => {
+          const distance = calculateDistance(userLat, userLng, location.lat, location.lng)
+          if (distance < minDistance) {
+            minDistance = distance
+            closestLocation = location
+          }
+        })
+
+        if (closestLocation && minDistance <= MAX_DISTANCE_KM) {
+          setActiveLocation(closestLocation)
+          setNearestInfo({
+            id: closestLocation.id,
+            distance: parseFloat(minDistance.toFixed(1)),
+          })
+        } else {
+          // Nearest is out of range
+          if (closestLocation) {
+            setLocationError(
+              `Lo sentimos, no cubrimos tu zona actual. La sede más cercana está a ${minDistance.toFixed(1)} km.`
+            )
+            setActiveLocation(closestLocation)
+          } else {
+            setLocationError("No se encontraron sedes cercanas.")
+          }
+        }
+        setIsSearching(false)
+      },
+      (error) => {
+        console.error("Error geoposition:", error.code, error.message)
+        let errorMsg = "No pudimos obtener tu ubicación."
+
+        switch (error.code) {
+          case 1: // PERMISSION_DENIED
+            errorMsg =
+              "Permiso denegado. Por favor habilita la ubicación en tu navegador."
+            break
+          case 2: // POSITION_UNAVAILABLE
+            errorMsg = "Tu ubicación no está disponible en este momento."
+            break
+          case 3: // TIMEOUT
+            errorMsg = "Se agotó el tiempo de espera. Inténtalo de nuevo."
+            break
+        }
+
+        setLocationError(errorMsg)
+        setIsSearching(false)
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    )
+  }
+
+  // Haversine formula to calculate distance in km
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const R = 6371 // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1)
+    const dLon = deg2rad(lon2 - lon1)
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2)
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+    const d = R * c // Distance in km
+    return d
+  }
+
+  const deg2rad = (deg: number) => {
+    return deg * (Math.PI / 180)
+  }
 
   return (
     <section id="sedes" className="bg-secondary/30 py-24 md:py-32">
@@ -121,9 +250,42 @@ export function LocationsSection() {
               <span className="text-gradient">{"al Mundo"}</span>
             </span>
           </h2>
-          <p className="max-w-2xl text-lg text-muted-foreground">
-            {"9 sedes en Bogota, presencia internacional en Miami y proximamente en Medellin. La experiencia Salchipaperia D.C. crece contigo."}
+          <p className="mb-6 max-w-2xl text-lg text-muted-foreground">
+            {"10+ sedes en Bogota, presencia internacional en Miami y proximamente en Medellin. La experiencia Salchipaperia D.C. crece contigo."}
           </p>
+
+          <button
+            onClick={findNearestLocation}
+            disabled={isSearching}
+            className="flex items-center gap-2 rounded-full bg-primary/10 px-6 py-3 text-sm font-bold text-primary transition-all hover:bg-primary/20 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSearching ? (
+              <>
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                Buscando cercana...
+              </>
+            ) : (
+              <>
+                <Crosshair className="h-4 w-4" />
+                Encontrar mi Sede mas Cercana
+              </>
+            )}
+          </button>
+
+          {locationError && (
+            <div className="mt-4 flex items-center gap-2 rounded-lg bg-destructive/10 px-4 py-2 text-sm text-destructive animate-in fade-in slide-in-from-top-2">
+              <AlertCircle className="h-4 w-4" />
+              {locationError}
+            </div>
+          )}
+
+          {nearestInfo && !locationError && (
+            <div className="mt-4 flex items-center gap-2 rounded-lg bg-green-500/10 px-4 py-2 text-sm text-green-600 dark:text-green-400 animate-in fade-in slide-in-from-top-2">
+              <MapPin className="h-4 w-4" />
+              ¡Encontramos una sede a solo {nearestInfo.distance} km de ti!
+            </div>
+          )}
+
         </div>
 
         {/* Locations grid */}
@@ -142,28 +304,25 @@ export function LocationsSection() {
               <button
                 key={location.id}
                 onClick={() => setActiveLocation(location)}
-                className={`group flex items-center justify-between rounded-xl px-4 py-3 text-left transition-all duration-300 ${
-                  activeLocation.id === location.id
-                    ? "bg-primary text-primary-foreground glow-yellow"
-                    : "bg-card text-foreground hover:bg-card/80"
-                }`}
+                className={`group flex items-center justify-between rounded-xl px-4 py-3 text-left transition-all duration-300 ${activeLocation.id === location.id
+                  ? "bg-primary text-primary-foreground glow-yellow"
+                  : "bg-card text-foreground hover:bg-card/80"
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <MapPin
-                    className={`h-4 w-4 shrink-0 ${
-                      activeLocation.id === location.id
-                        ? "text-primary-foreground"
-                        : "text-primary"
-                    }`}
+                    className={`h-4 w-4 shrink-0 ${activeLocation.id === location.id
+                      ? "text-primary-foreground"
+                      : "text-primary"
+                      }`}
                   />
                   <span className="text-sm font-bold">{location.name}</span>
                 </div>
                 <ChevronRight
-                  className={`h-4 w-4 shrink-0 transition-transform ${
-                    activeLocation.id === location.id
-                      ? "text-primary-foreground translate-x-0"
-                      : "text-muted-foreground -translate-x-1 group-hover:translate-x-0"
-                  }`}
+                  className={`h-4 w-4 shrink-0 transition-transform ${activeLocation.id === location.id
+                    ? "text-primary-foreground translate-x-0"
+                    : "text-muted-foreground -translate-x-1 group-hover:translate-x-0"
+                    }`}
                 />
               </button>
             ))}
@@ -179,23 +338,21 @@ export function LocationsSection() {
             {internationalLocations.map((location) => (
               <button
                 key={location.id}
-                onClick={() => setActiveLocation(location as Location)}
-                className={`group flex items-center justify-between rounded-xl px-4 py-3 text-left transition-all duration-300 ${
-                  activeLocation.id === location.id
-                    ? "bg-accent text-accent-foreground glow-pink"
-                    : "bg-card text-foreground hover:bg-card/80"
-                }`}
+                onClick={() => setActiveLocation(location)}
+                className={`group flex items-center justify-between rounded-xl px-4 py-3 text-left transition-all duration-300 ${activeLocation.id === location.id
+                  ? "bg-accent text-accent-foreground glow-pink"
+                  : "bg-card text-foreground hover:bg-card/80"
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <span className="text-base">{"🇺🇸"}</span>
                   <span className="text-sm font-bold">{location.name}</span>
                 </div>
                 <ChevronRight
-                  className={`h-4 w-4 shrink-0 transition-transform ${
-                    activeLocation.id === location.id
-                      ? "text-accent-foreground translate-x-0"
-                      : "text-muted-foreground -translate-x-1 group-hover:translate-x-0"
-                  }`}
+                  className={`h-4 w-4 shrink-0 transition-transform ${activeLocation.id === location.id
+                    ? "text-accent-foreground translate-x-0"
+                    : "text-muted-foreground -translate-x-1 group-hover:translate-x-0"
+                    }`}
                 />
               </button>
             ))}
@@ -231,7 +388,7 @@ export function LocationsSection() {
                 <h3 className="text-3xl font-bold text-foreground">
                   {activeLocation.name}
                 </h3>
-                {(activeLocation as typeof internationalLocations[number]).flag && (
+                {activeLocation.flag && (
                   <span className="rounded-full bg-accent px-3 py-1 text-xs font-bold text-accent-foreground">
                     {"🇺🇸 USA"}
                   </span>
@@ -261,29 +418,21 @@ export function LocationsSection() {
               </div>
             </div>
 
-            {/* Map placeholder */}
-            <div className="relative aspect-video overflow-hidden rounded-xl bg-secondary">
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                <Navigation className="h-8 w-8 text-primary" />
-                <p className="text-sm font-medium text-muted-foreground">
-                  {"Sede " + activeLocation.name}
-                </p>
-              </div>
-              {/* Decorative grid */}
-              <div className="absolute inset-0 opacity-10">
-                <div className="grid h-full w-full grid-cols-8 grid-rows-6">
-                  {Array.from({ length: 48 }).map((_, i) => (
-                    <div key={i} className="border border-border/50" />
-                  ))}
-                </div>
-              </div>
-              {/* Pin marker */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <div className="relative">
-                  <div className="h-4 w-4 rounded-full bg-primary glow-yellow" />
-                  <div className="absolute inset-0 animate-ping rounded-full bg-primary/50" />
-                </div>
-              </div>
+            {/* Map Real */}
+            <div className="relative aspect-video overflow-hidden rounded-xl bg-secondary shadow-lg ring-1 ring-border/50">
+              <iframe
+                key={activeLocation.id} // Force reload on change
+                title={`Mapa ${activeLocation.name}`}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                loading="lazy"
+                allowFullScreen
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(
+                  activeLocation.address
+                )}&t=m&z=15&ie=UTF8&iwloc=&output=embed`}
+                className="h-full w-full opacity-90 transition-opacity duration-300 hover:opacity-100"
+              />
             </div>
 
             <a

@@ -12,7 +12,7 @@ export function Hero() {
       {/* Background image with overlay */}
       <div className="absolute inset-0">
         <Image
-          src="/images/hero-salchipapas.jpg"
+          src="/images/hero-salchipapas.webp"
           alt="Salchipapas gourmet premium"
           fill
           className="object-cover opacity-40"

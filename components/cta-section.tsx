@@ -42,7 +42,7 @@ export function CtaSection() {
         </h2>
 
         <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-          {"Ordena ahora para delivery o visita cualquiera de nuestras 7+ sedes. La experiencia premium que tu paladar se merece."}
+          {"Ordena ahora para delivery o visita cualquiera de nuestras 10+ sedes. La experiencia premium que tu paladar se merece."}
         </p>
 
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">

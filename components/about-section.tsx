@@ -39,7 +39,7 @@ export function AboutSection() {
           <div className="relative">
             <div className="relative aspect-[4/5] overflow-hidden rounded-3xl">
               <Image
-                src="/images/restaurant-interior.jpg"
+                src="/images/restaurant-interior.webp"
                 alt="Interior del restaurante Salchipaperia D.C."
                 fill
                 className="object-cover"
@@ -49,7 +49,7 @@ export function AboutSection() {
 
             {/* Floating stat card */}
             <div className="absolute -right-4 -bottom-6 rounded-2xl bg-card p-6 glow-yellow md:-right-8">
-              <p className="text-4xl font-bold text-primary">7+</p>
+              <p className="text-4xl font-bold text-primary">10+</p>
               <p className="text-sm text-muted-foreground">Sedes en</p>
               <p className="text-sm font-semibold text-foreground">todo el pais</p>
             </div>
@@ -73,7 +73,7 @@ export function AboutSection() {
               </span>
             </h2>
             <p className="mb-8 text-lg leading-relaxed text-muted-foreground">
-              {"Nacimos con la mision de transformar la salchipapa tradicional en una experiencia gastronomica de primer nivel. Con ingredientes cuidadosamente seleccionados y tecnicas innovadoras, hemos creado un concepto unico que ya conquista mas de 7 ciudades."}
+              {"Nacimos con la mision de transformar la salchipapa tradicional en una experiencia gastronomica de primer nivel. Con ingredientes cuidadosamente seleccionados y tecnicas innovadoras, hemos creado un concepto unico que ya conquista mas de 10 sedes."}
             </p>
 
             {/* Feature grid */}
