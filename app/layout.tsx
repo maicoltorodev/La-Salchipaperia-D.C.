@@ -27,6 +27,24 @@ export const metadata: Metadata = {
     ],
     apple: '/apple-icon.png',
   },
+  openGraph: {
+    title: "Salchipaperia D.C. | La Salchipapa Premium",
+    description: "La experiencia premium de salchipapas en Bogotá, Miami y Medellín.",
+    images: [
+      {
+        url: "/imagen-metadata.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Salchipaperia D.C. Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Salchipaperia D.C. | La Salchipapa Premium",
+    description: "La experiencia premium de salchipapas en Bogotá, Miami y Medellín.",
+    images: ["/imagen-metadata.jpg"],
+  },
 }
 
 export const viewport: Viewport = {
@@ -36,6 +54,7 @@ export const viewport: Viewport = {
 }
 
 import { CartProvider } from '@/context/cart-context'
+import { WhatsAppFAB } from '@/components/ui/whatsapp-fab'
 import { OrderWizard } from '@/components/ui/order-wizard'
 import { CustomCursor } from '@/components/ui/custom-cursor'
 
@@ -51,6 +70,7 @@ export default function RootLayout({
       >
         <CartProvider>
           <OrderWizard />
+          <WhatsAppFAB />
           <CustomCursor />
           {children}
         </CartProvider>
