@@ -21,7 +21,10 @@ export const metadata: Metadata = {
     "Salchipaperia D.C. La experiencia premium de salchipapas. 9 sedes en Bogota, Miami y proximamente Medellin.",
   generator: 'v0.app',
   icons: {
-    icon: '/favicon.ico',
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon-light-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
     apple: '/apple-icon.png',
   },
 }
