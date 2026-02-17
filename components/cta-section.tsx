@@ -1,9 +1,53 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Phone, ArrowRight, Sparkles } from "lucide-react"
+import restaurantData from "@/data/restaurant-info.json"
 
 export function CtaSection() {
+  const [nearestLocation, setNearestLocation] = useState<any>(null)
+  const [isLocating, setIsLocating] = useState(false)
+
+  // Haversine formula
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const R = 6371
+    const dLat = (lat2 - lat1) * (Math.PI / 180)
+    const dLon = (lon2 - lon1) * (Math.PI / 180)
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2)
+    const b = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+    return R * b
+  }
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      setIsLocating(true)
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude: userLat, longitude: userLng } = position.coords
+          let closest = restaurantData.locations[0]
+          let minDistance = Infinity
+
+          restaurantData.locations.forEach((loc: any) => {
+            if (loc.lat && loc.lng) {
+              const dist = calculateDistance(userLat, userLng, loc.lat, loc.lng)
+              if (dist < minDistance) {
+                minDistance = dist
+                closest = loc
+              }
+            }
+          })
+          setNearestLocation(closest)
+          setIsLocating(false)
+        },
+        () => setIsLocating(false),
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+      )
+    }
+  }, [])
   return (
     <section className="relative overflow-hidden bg-background py-24 md:py-32">
       {/* Background glow */}
@@ -47,11 +91,13 @@ export function CtaSection() {
 
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
           <a
-            href="tel:+51999999999"
+            href={nearestLocation ? `tel:${nearestLocation.phone.replace(/\s+/g, '')}` : `https://wa.me/${restaurantData.contact.mainPhone}`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="group flex items-center gap-3 rounded-full bg-primary px-10 py-4 text-base font-bold text-primary-foreground transition-all duration-300 hover:scale-105 glow-yellow"
           >
-            <Phone className="h-5 w-5" />
-            Ordenar por Delivery
+            <Phone className={`h-5 w-5 ${isLocating ? 'animate-pulse' : ''}`} />
+            {isLocating ? "Buscando Sede..." : nearestLocation ? `Llamar a ${nearestLocation.name}` : "Ordenar por Delivery"}
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </a>
           <a

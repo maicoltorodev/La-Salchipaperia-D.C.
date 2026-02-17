@@ -267,7 +267,7 @@ export function OrderWizard() {
                                                     </label>
                                                     <input
                                                         type="tel"
-                                                        placeholder="Ej: 3101234567"
+                                                        placeholder="Ej: 3143855079"
                                                         value={orderDetails.phone}
                                                         onChange={(e) => updateOrderDetails({ phone: e.target.value })}
                                                         className="w-full rounded-2xl bg-white/5 p-4 text-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all border border-white/5"
