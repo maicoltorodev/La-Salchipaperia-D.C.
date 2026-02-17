@@ -393,7 +393,7 @@ const menuData: MenuCategory[] = [
     id: "entradas",
     label: "Entradas",
     icon: <Salad className="h-4 w-4" />,
-    subtitle: "Ideales para entrada o para acompanar tus platos",
+    subtitle: "Ideales para entrada o para acompañar",
     items: [
       {
         id: 400,
@@ -712,7 +712,7 @@ export function MenuSection() {
                 </>
               ) : (
                 <>
-                  Ver Todos los {(activeData?.items.length ?? 0)} platos <Plus className="h-4 w-4" />
+                  Ver Todos ({activeData?.items.length ?? 0}) <Plus className="h-4 w-4" />
                 </>
               )}
             </button>

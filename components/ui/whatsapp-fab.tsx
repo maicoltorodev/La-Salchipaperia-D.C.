@@ -1,10 +1,20 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Loader2, MapPin, Search, CheckCircle2, Navigation } from "lucide-react"
+import { useState, useEffect, useCallback, useRef } from "react"
+import { Loader2, MapPin, Search, CheckCircle2, Navigation, X } from "lucide-react"
 
 import restaurantData from "@/data/restaurant-info.json"
 const allLocations = restaurantData.locations
+
+const NOTIFICATION_MESSAGES = [
+    "¡Bienvenido a La Salchipapería D.C.! 🍟",
+    "¿Hambre de algo premium? Pide tu salchipapa favorita ahora. ✨",
+    "¡9 sedes listas para atenderte! Bogotá, Miami y pronto Medellín. 📍",
+    "Acompaña tu pedido con nuestras salsas artesanales. 🍯",
+    "¿Sabías que somos la mejor salchipapa del país? ¡Pruébala ya! 🏆"
+]
+
+const NOTIFICATION_SOUND = "https://assets.mixkit.co/active_storage/sfx/2861/2861-preview.mp3"
 
 export function WhatsAppFAB() {
     const [isLoading, setIsLoading] = useState(false)
@@ -13,6 +23,12 @@ export function WhatsAppFAB() {
     const [foundLocation, setFoundLocation] = useState<any>(null)
     const [isReady, setIsReady] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [geoError, setGeoError] = useState(false)
+
+    // Notification states
+    const [currentMessage, setCurrentMessage] = useState<string | null>(null)
+    const [showMessage, setShowMessage] = useState(false)
+    const audioRef = useRef<HTMLAudioElement | null>(null)
 
     // Haversine formula
     const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -30,15 +46,17 @@ export function WhatsAppFAB() {
     const handleClick = () => {
         setIsLoading(true)
         setProgress(0)
-        setStatus("Iniciando escaneo satelital...")
+        setStatus("Esperando permiso de ubicación...")
         setFoundLocation(null)
         setIsReady(false)
         setError(null)
+        setGeoError(false)
+        setShowMessage(false)
 
         if (!navigator.geolocation) {
-            // Fallback immediately if no geo support
-            const defaultLoc = allLocations[0]
-            setFoundLocation(defaultLoc)
+            setGeoError(true)
+            const centroLoc = allLocations.find((l: any) => l.name === "Centro") || allLocations[0]
+            setFoundLocation(centroLoc)
             return
         }
 
@@ -60,12 +78,52 @@ export function WhatsAppFAB() {
                 setFoundLocation(closest)
             },
             () => {
-                // Fallback on error
-                setFoundLocation(allLocations[0])
+                setGeoError(true)
+                const centroLoc = allLocations.find((l: any) => l.name === "Centro") || allLocations[0]
+                setFoundLocation(centroLoc)
             },
             { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
         )
     }
+
+    const playNotificationSound = useCallback(() => {
+        if (!audioRef.current) {
+            audioRef.current = new Audio(NOTIFICATION_SOUND)
+        }
+        audioRef.current.play().catch(e => console.log("Audio play failed:", e))
+    }, [])
+
+    const triggerNotification = useCallback((index: number) => {
+        setCurrentMessage(NOTIFICATION_MESSAGES[index])
+        setShowMessage(true)
+        playNotificationSound()
+
+        // Auto hide after 6 seconds
+        setTimeout(() => {
+            setShowMessage(false)
+        }, 6000)
+    }, [playNotificationSound])
+
+    useEffect(() => {
+        // First message after 3 seconds
+        const firstTimer = setTimeout(() => {
+            triggerNotification(0)
+        }, 3000)
+
+        // Following messages every 30 seconds
+        const timers: NodeJS.Timeout[] = []
+        for (let i = 1; i < NOTIFICATION_MESSAGES.length; i++) {
+            const timer = setTimeout(() => {
+                triggerNotification(i)
+            }, 3000 + i * 30000)
+            timers.push(timer)
+        }
+
+        return () => {
+            clearTimeout(firstTimer)
+            timers.forEach(clearTimeout)
+        }
+    }, [triggerNotification])
 
     useEffect(() => {
         if (!isLoading) return
@@ -74,23 +132,22 @@ export function WhatsAppFAB() {
             setProgress(prev => {
                 const next = prev + 1
 
-                if (next === 20) setStatus("Detectando coordenadas GPS...")
-                if (next === 45) setStatus("Cruzando datos con sedes D.C. ...")
-                if (next === 75) setStatus("Calculando ruta más rápida...")
+                if (next === 10) setStatus(geoError ? "Localización no permitida" : "Permiso concedido. Escaneando...")
+                if (next === 30) setStatus("Cruzando datos con satélites D.C. ...")
+                if (next === 60) setStatus(geoError ? "Buscando sede principal..." : "Calculando ruta más rápida...")
                 if (next === 90) {
                     if (foundLocation) {
-                        setStatus(`¡Sede ${foundLocation.name} detectada!`)
+                        setStatus(geoError ? "Conectando con Sede Centro..." : `¡Sede ${foundLocation.name} detectada!`)
                     } else {
-                        // Keep waiting or use fallback if still no foundLocation
                         setStatus("Sincronizando con satélite...")
                     }
                 }
 
                 if (next >= 100) {
-                    if (!foundLocation) return 99 // Hold at 99% if geo is slow
+                    if (!foundLocation) return 99
 
                     clearInterval(timer)
-                    setStatus(`Sede ${foundLocation.name} lista.`)
+                    setStatus(geoError ? "No se pudo encontrar tu sede más cercana, te comunicarás con Sede Centro." : `Sede ${foundLocation.name} lista.`)
                     setIsReady(true)
                     return 100
                 }
@@ -99,10 +156,38 @@ export function WhatsAppFAB() {
         }, 30)
 
         return () => clearInterval(timer)
-    }, [isLoading, foundLocation])
+    }, [isLoading, foundLocation, geoError])
 
     return (
         <>
+            {/* Notification Tooltip */}
+            <div
+                className={`fixed bottom-24 right-8 z-[70] max-w-[280px] transition-all duration-500 transform ${showMessage ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-4 scale-95 pointer-events-none"
+                    }`}
+            >
+                <div className="relative glass-card rounded-2xl border-white/20 p-4 shadow-2xl bg-black/80 backdrop-blur-md">
+                    <button
+                        onClick={() => setShowMessage(false)}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600 transition-colors"
+                    >
+                        <X className="h-3 w-3" />
+                    </button>
+                    <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-[#25D366]/20 flex items-center justify-center border border-[#25D366]/30">
+                            <span className="text-xl">🍟</span>
+                        </div>
+                        <div className="space-y-1">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#25D366]">La Salchipapería D.C.</p>
+                            <p className="text-xs font-medium text-white leading-relaxed">
+                                {currentMessage}
+                            </p>
+                        </div>
+                    </div>
+                    {/* Tail */}
+                    <div className="absolute -bottom-2 right-6 h-4 w-4 rotate-45 bg-black/80 border-r border-b border-white/20" />
+                </div>
+            </div>
+
             <button
                 onClick={handleClick}
                 className="fixed bottom-8 right-8 z-[70] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_10px_30px_rgba(37,211,102,0.4)] transition-all duration-500 hover:scale-110 hover:shadow-[0_15px_40px_rgba(37,211,102,0.6)] active:scale-90 glow-green"
@@ -124,6 +209,13 @@ export function WhatsAppFAB() {
                     <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" />
 
                     <div className="glass-card relative w-full max-w-sm overflow-hidden rounded-[2.5rem] border-white/20 p-8 text-center shadow-[0_0_100px_rgba(37,211,102,0.2)]">
+                        <button
+                            onClick={() => setIsLoading(false)}
+                            className="absolute top-6 right-6 z-10 p-2 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 transition-all active:scale-95"
+                        >
+                            <X className="h-5 w-5" />
+                        </button>
+
                         {/* Scanning Effect */}
                         <div className="absolute top-0 left-0 h-1 w-full animate-scan bg-gradient-to-r from-transparent via-[#25D366] to-transparent opacity-50" />
 
@@ -145,10 +237,10 @@ export function WhatsAppFAB() {
 
                         <div className="space-y-2 mb-8">
                             <h3 className="text-xl font-black uppercase tracking-widest text-foreground">
-                                {progress < 100 ? "Localizando Sede" : "Sede Encontrada"}
+                                {progress < 100 ? "Localizando Sede" : (geoError ? "Sede Principal" : "Sede Encontrada")}
                             </h3>
                             <p className="text-sm font-medium text-muted-foreground h-5 flex items-center justify-center gap-2">
-                                {status.includes("¡") ? <MapPin className="h-3 w-3 text-[#25D366]" /> : <Loader2 className="h-3 w-3 animate-spin" />}
+                                {status.includes("¡") || status.includes("Centro") ? <MapPin className="h-3 w-3 text-[#25D366]" /> : <Loader2 className="h-3 w-3 animate-spin" />}
                                 {status}
                             </p>
                         </div>

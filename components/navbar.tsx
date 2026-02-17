@@ -44,7 +44,7 @@ export function Navbar() {
           </div>
           <div className="flex flex-col">
             <span className="text-lg font-black leading-none tracking-tighter text-foreground sm:text-xl">
-              {"Salchipaperia"}
+              {"La Salchipaperia"}
             </span>
             <span className="text-xs font-bold leading-none tracking-widest text-primary uppercase">
               D.C.
