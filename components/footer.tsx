@@ -1,5 +1,6 @@
 import Image from "next/image"
 import { Instagram, Facebook, MapPin, Phone, Mail } from "lucide-react"
+import restaurantData from "@/data/restaurant-info.json"
 
 const footerLinks = {
   menu: [
@@ -32,19 +33,19 @@ export function Footer() {
             <div className="mb-4 flex items-center gap-3">
               <Image
                 src="/images/logo.jpg"
-                alt="Salchipaperia D.C. Logo"
+                alt="La Salchipaperia D.C. Logo"
                 width={44}
                 height={44}
                 className="rounded-full"
               />
-              <span className="text-xl font-bold text-foreground">{"Salchipaperia D.C."}</span>
+              <span className="text-xl font-bold text-foreground">{"La Salchipaperia D.C."}</span>
             </div>
             <p className="mb-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
               {"La experiencia premium de salchipapas. 9 sedes en Bogota, presencia en Miami y proximamente en Medellin."}
             </p>
             <div className="flex gap-3">
               <a
-                href="https://instagram.com"
+                href={restaurantData.contact.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-all duration-300 hover:bg-primary hover:text-primary-foreground"
@@ -53,7 +54,7 @@ export function Footer() {
                 <Instagram className="h-5 w-5" />
               </a>
               <a
-                href="https://facebook.com"
+                href={restaurantData.contact.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-all duration-300 hover:bg-primary hover:text-primary-foreground"
@@ -111,19 +112,19 @@ export function Footer() {
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 text-primary" />
                 <a
-                  href="tel:+576010000000"
+                  href={`tel:+${restaurantData.contact.mainPhone}`}
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
-                  +57 601 000 0000
+                  +{restaurantData.contact.mainPhone}
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-primary" />
                 <a
-                  href="mailto:hola@salchipaperiadc.com"
+                  href={`mailto:${restaurantData.contact.email}`}
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
-                  hola@salchipaperiadc.com
+                  {restaurantData.contact.email}
                 </a>
               </li>
               <li className="flex items-start gap-2">
@@ -139,7 +140,7 @@ export function Footer() {
         {/* Bottom */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 md:flex-row">
           <p className="text-xs text-muted-foreground">
-            {"© 2026 Salchipaperia D.C. Todos los derechos reservados."}
+            {"© 2026 La Salchipaperia D.C. Todos los derechos reservados."}
           </p>
           <div className="flex gap-6">
             {footerLinks.legal.map((link) => (

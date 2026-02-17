@@ -17,18 +17,9 @@ import {
     Phone
 } from "lucide-react"
 
-// Import existing locations to find WA numbers
-const bogotaLocations = [
-    { id: 1, name: "Chapinero", whatsapp: "https://wa.me/573005946797" },
-    { id: 2, name: "Cedritos", whatsapp: "https://wa.me/573132646467" },
-    { id: 3, name: "Colina Campestre", whatsapp: "https://wa.me/573138812581" },
-    { id: 4, name: "Chia", whatsapp: "https://wa.me/573138812581" },
-    { id: 5, name: "Calle 80", whatsapp: "https://wa.me/573105553177" },
-    { id: 6, name: "Salas - Fontibon", whatsapp: "https://wa.me/573133182103" },
-    { id: 7, name: "Kennedy", whatsapp: "https://wa.me/573133182103" },
-    { id: 8, name: "Modelia", whatsapp: "https://wa.me/573133182103" },
-    { id: 9, name: "Cajica", whatsapp: "https://wa.me/573138812581" },
-]
+// Import restaurant data from JSON
+import restaurantData from "@/data/restaurant-info.json"
+const bogotaLocations = restaurantData.locations
 
 export function OrderWizard() {
     const {

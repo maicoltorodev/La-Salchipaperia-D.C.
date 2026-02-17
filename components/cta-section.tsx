@@ -17,7 +17,7 @@ export function CtaSection() {
           <div className="relative">
             <Image
               src="/images/logo.jpg"
-              alt="Salchipaperia D.C. Logo"
+              alt="La Salchipaperia D.C. Logo"
               width={96}
               height={96}
               className="rounded-full glow-yellow"

@@ -16,9 +16,9 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "Salchipaperia D.C. | La Salchipapa Premium",
+  title: "La Salchipaperia D.C. | La Salchipapa Premium",
   description:
-    "Salchipaperia D.C. La experiencia premium de salchipapas. 9 sedes en Bogota, Miami y proximamente Medellin.",
+    "La Salchipaperia D.C. La experiencia premium de salchipapas. 9 sedes en Bogota, Miami y proximamente Medellin.",
   generator: 'v0.app',
   icons: {
     icon: [
@@ -28,20 +28,20 @@ export const metadata: Metadata = {
     apple: '/apple-icon.png',
   },
   openGraph: {
-    title: "Salchipaperia D.C. | La Salchipapa Premium",
+    title: "La Salchipaperia D.C. | La Salchipapa Premium",
     description: "La experiencia premium de salchipapas en Bogotá, Miami y Medellín.",
     images: [
       {
         url: "/imagen-metadata.jpg",
         width: 1200,
         height: 630,
-        alt: "Salchipaperia D.C. Logo",
+        alt: "La Salchipaperia D.C. Logo",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Salchipaperia D.C. | La Salchipapa Premium",
+    title: "La Salchipaperia D.C. | La Salchipapa Premium",
     description: "La experiencia premium de salchipapas en Bogotá, Miami y Medellín.",
     images: ["/imagen-metadata.jpg"],
   },

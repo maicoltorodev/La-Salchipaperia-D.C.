@@ -16,130 +16,24 @@ interface Location {
   lng: number
 }
 
-const bogotaLocations: Location[] = [
-  {
-    id: 1,
-    name: "Chapinero",
-    address: "Cl. 67 #8-29, Bogotá, Colombia",
-    hours: "Lun - Dom: 11:00 AM - 11:00 PM",
-    phone: "+57 300 594 6797",
-    whatsapp: "https://wa.me/573005946797",
-    tag: null,
-    lat: 4.6486,
-    lng: -74.0620
-  },
-  {
-    id: 2,
-    name: "Modelia",
-    address: "Av. La Esperanza #75-10, Fontibón, Bogotá, Colombia",
-    hours: "Lun - Dom: 11:00 AM - 10:00 PM",
-    phone: "+57 300 462 9923",
-    whatsapp: "https://wa.me/573004629923",
-    tag: null,
-    lat: 4.6644,
-    lng: -74.1162
-  },
-  {
-    id: 3,
-    name: "Montes",
-    address: "Cl. 8 Sur #32-35, Bogotá, Colombia",
-    hours: "Lun - Dom: 11:00 AM - 10:00 PM",
-    phone: "+57 302 464 8661",
-    whatsapp: "https://wa.me/573024648661",
-    tag: null,
-    lat: 4.6033,
-    lng: -74.1077
-  },
-  {
-    id: 4,
-    name: "Suba",
-    address: "Cl. 139 # 92A-3, Suba, Bogotá, D.C",
-    hours: "Lun - Dom: 11:00 AM - 10:00 PM",
-    phone: "+57 302 216 3725",
-    whatsapp: "https://wa.me/573022163725",
-    tag: null,
-    lat: 4.7351,
-    lng: -74.0952
-  },
-  {
-    id: 5,
-    name: "Bosa",
-    address: "Cl. 68 Sur #78 j - 74, Bogotá",
-    hours: "Lun - Dom: 11:00 AM - 10:00 PM",
-    phone: "+57 324 228 7574",
-    whatsapp: "https://wa.me/573242287574",
-    tag: null,
-    lat: 4.6136,
-    lng: -74.1947
-  },
-  {
-    id: 6,
-    name: "Kennedy",
-    address: "Cra. 78B #38C, Kennedy, Bogotá, Colombia",
-    hours: "Lun - Dom: 11:00 AM - 10:00 PM",
-    phone: "+57 322 300 4583",
-    whatsapp: "https://wa.me/573223004583",
-    tag: null,
-    lat: 4.6346,
-    lng: -74.1565
-  },
-  {
-    id: 7,
-    name: "Diver Plaza",
-    address: "Dg. 72 #98-36, Bogotá, Colombia",
-    hours: "Lun - Dom: 11:00 AM - 10:00 PM",
-    phone: "+57 301 793 1079",
-    whatsapp: "https://wa.me/573017931079",
-    tag: null,
-    lat: 4.7066,
-    lng: -74.1227
-  },
-  {
-    id: 8,
-    name: "Villa del Prado",
-    address: "Cl. 174a #54C - 06, Bogotá",
-    hours: "Lun - Dom: 11:00 AM - 10:00 PM",
-    phone: "+57 313 486 7097",
-    whatsapp: "https://wa.me/573134867097",
-    tag: null,
-    lat: 4.7548,
-    lng: -74.0535
-  },
-  {
-    id: 9,
-    name: "Centro",
-    address: "Cra. 7 #19-03, Bogotá, Colombia",
-    hours: "Lun - Dom: 10:00 AM - 10:00 PM",
-    phone: "+57 322 355 1610",
-    whatsapp: "https://wa.me/573223551610",
-    tag: null,
-    lat: 4.6038,
-    lng: -74.0722
-  },
-]
+import restaurantData from "@/data/restaurant-info.json"
 
-const internationalLocations: Location[] = [
-  {
-    id: 10,
-    name: "Miami",
-    address: "Miami, Florida, USA",
-    hours: "Mon - Sun: 11:00 AM - 10:00 PM",
-    phone: "+1 305 000 0000",
-    whatsapp: "https://wa.me/13050000000",
-    tag: "international",
-    flag: "US",
-    lat: 25.7617,
-    lng: -80.1918
-  },
-]
+interface Location {
+  id: number
+  name: string
+  address: string
+  hours: string
+  phone: string
+  whatsapp: string
+  tag: string | null
+  flag?: string
+  lat: number
+  lng: number
+}
 
-const comingSoon = [
-  {
-    id: 11,
-    name: "Medellin",
-    tag: "proximamente",
-  },
-]
+const bogotaLocations: Location[] = (restaurantData.locations as Location[]).filter(l => l.tag === "bogota")
+const internationalLocations: Location[] = (restaurantData.locations as Location[]).filter(l => l.tag === "international")
+const comingSoon = (restaurantData.locations as any[]).filter(l => l.tag === "proximamente")
 
 // 10km coverage radius
 const MAX_DISTANCE_KM = 10;
@@ -261,7 +155,7 @@ export function LocationsSection() {
             </span>
           </h2>
           <p className="mb-6 max-w-2xl text-lg text-muted-foreground">
-            {"10+ sedes en Bogota, presencia internacional en Miami y proximamente en Medellin. La experiencia Salchipaperia D.C. crece contigo."}
+            {"10+ sedes en Bogota, presencia internacional en Miami y próximamente en Medellin. La experiencia La Salchipaperia D.C. crece contigo."}
           </p>
 
           <button
@@ -458,7 +352,7 @@ export function LocationsSection() {
                 Pedir por WhatsApp
               </a>
               <a
-                href={`https://maps.google.com/?q=${encodeURIComponent("Salchipaperia D.C. " + activeLocation.address)}`}
+                href={`https://maps.google.com/?q=${encodeURIComponent("La Salchipaperia D.C. " + activeLocation.address)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex flex-1 items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.02] glow-yellow"

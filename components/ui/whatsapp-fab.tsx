@@ -3,25 +3,66 @@
 import { useState, useEffect } from "react"
 import { Loader2, MapPin, Search, CheckCircle2, Navigation } from "lucide-react"
 
-const bogotaLocations = [
-    { id: 1, name: "Chapinero", whatsapp: "573005946797" },
-    { id: 2, name: "Cedritos", whatsapp: "573132646467" },
-    { id: 3, name: "Colina Campestre", whatsapp: "573138812581" },
-    { id: 4, name: "Calle 80", whatsapp: "573105553177" },
-    { id: 5, name: "Kennedy", whatsapp: "573133182103" },
-]
+import restaurantData from "@/data/restaurant-info.json"
+const allLocations = restaurantData.locations
 
 export function WhatsAppFAB() {
     const [isLoading, setIsLoading] = useState(false)
     const [progress, setProgress] = useState(0)
     const [status, setStatus] = useState("")
     const [foundLocation, setFoundLocation] = useState<any>(null)
+    const [error, setError] = useState<string | null>(null)
+
+    // Haversine formula
+    const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+        const R = 6371
+        const dLat = (lat2 - lat1) * (Math.PI / 180)
+        const dLon = (lon2 - lon1) * (Math.PI / 180)
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        return R * c
+    }
 
     const handleClick = () => {
         setIsLoading(true)
         setProgress(0)
         setStatus("Iniciando escaneo satelital...")
         setFoundLocation(null)
+        setError(null)
+
+        if (!navigator.geolocation) {
+            // Fallback immediately if no geo support
+            const defaultLoc = allLocations[0]
+            setFoundLocation(defaultLoc)
+            return
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude: userLat, longitude: userLng } = position.coords
+                let closest = allLocations[0]
+                let minDistance = Infinity
+
+                allLocations.forEach((loc: any) => {
+                    if (loc.lat && loc.lng) {
+                        const dist = calculateDistance(userLat, userLng, loc.lat, loc.lng)
+                        if (dist < minDistance) {
+                            minDistance = dist
+                            closest = loc
+                        }
+                    }
+                })
+                setFoundLocation(closest)
+            },
+            () => {
+                // Fallback on error
+                setFoundLocation(allLocations[0])
+            },
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        )
     }
 
     useEffect(() => {
@@ -35,15 +76,21 @@ export function WhatsAppFAB() {
                 if (next === 45) setStatus("Cruzando datos con sedes D.C. ...")
                 if (next === 75) setStatus("Calculando ruta más rápida...")
                 if (next === 90) {
-                    const randomLoc = bogotaLocations[Math.floor(Math.random() * bogotaLocations.length)]
-                    setFoundLocation(randomLoc)
-                    setStatus(`¡Sede ${randomLoc.name} detectada!`)
+                    if (foundLocation) {
+                        setStatus(`¡Sede ${foundLocation.name} detectada!`)
+                    } else {
+                        // Keep waiting or use fallback if still no foundLocation
+                        setStatus("Sincronizando con satélite...")
+                    }
                 }
 
                 if (next >= 100) {
+                    if (!foundLocation) return 99 // Hold at 99% if geo is slow
+
                     clearInterval(timer)
                     setTimeout(() => {
-                        const win = window.open(`https://wa.me/${foundLocation?.whatsapp || "573005946797"}`, "_blank")
+                        const waLink = foundLocation.whatsapp || `https://api.whatsapp.com/send?phone=${restaurantData.contact.mainPhone}`
+                        const win = window.open(waLink, "_blank")
                         if (win) win.focus()
                         setIsLoading(false)
                     }, 1000)

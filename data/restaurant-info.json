@@ -1,0 +1,132 @@
+{
+    "locations": [
+        {
+            "id": 1,
+            "name": "Chapinero",
+            "address": "Cl. 67 #8-29, Bogotá, Colombia",
+            "hours": "Lun - Dom: 11:00 AM - 11:00 PM",
+            "phone": "+57 300 594 6797",
+            "whatsapp": "https://api.whatsapp.com/send?phone=573005946797",
+            "tag": "bogota",
+            "lat": 4.6486,
+            "lng": -74.0620
+        },
+        {
+            "id": 2,
+            "name": "Modelia",
+            "address": "Av. La Esperanza #75-10, Fontibón, Bogotá, Colombia",
+            "hours": "Lun - Dom: 11:00 AM - 10:00 PM",
+            "phone": "+57 300 462 9923",
+            "whatsapp": "https://api.whatsapp.com/send?phone=573004629923",
+            "tag": "bogota",
+            "lat": 4.6644,
+            "lng": -74.1162
+        },
+        {
+            "id": 3,
+            "name": "Montes",
+            "address": "Cl. 8 Sur #32-35, Bogotá, Colombia",
+            "hours": "Lun - Dom: 11:00 AM - 10:00 PM",
+            "phone": "+57 302 464 8661",
+            "whatsapp": "https://api.whatsapp.com/send?phone=573024648661",
+            "tag": "bogota",
+            "lat": 4.6033,
+            "lng": -74.1077
+        },
+        {
+            "id": 4,
+            "name": "Suba",
+            "address": "Cl. 139 # 92A-3, Suba, Bogotá, D.C",
+            "hours": "Lun - Dom: 11:00 AM - 10:00 PM",
+            "phone": "+57 302 216 3725",
+            "whatsapp": "https://api.whatsapp.com/send?phone=573022163725",
+            "tag": "bogota",
+            "lat": 4.7351,
+            "lng": -74.0952
+        },
+        {
+            "id": 5,
+            "name": "Bosa",
+            "address": "Cl. 68 Sur #78 j - 74, Bogotá",
+            "hours": "Lun - Dom: 11:00 AM - 10:00 PM",
+            "phone": "+57 324 228 7574",
+            "whatsapp": "https://api.whatsapp.com/send?phone=573242287574",
+            "tag": "bogota",
+            "lat": 4.6136,
+            "lng": -74.1947
+        },
+        {
+            "id": 6,
+            "name": "Kennedy",
+            "address": "Cra. 78B #38C, Kennedy, Bogotá, Colombia",
+            "hours": "Lun - Dom: 11:00 AM - 10:00 PM",
+            "phone": "+57 322 300 4583",
+            "whatsapp": "https://api.whatsapp.com/send?phone=573223004583",
+            "tag": "bogota",
+            "lat": 4.6346,
+            "lng": -74.1565
+        },
+        {
+            "id": 7,
+            "name": "Diver Plaza",
+            "address": "Dg. 72 #98-36, Bogotá, Colombia",
+            "hours": "Lun - Dom: 11:00 AM - 10:00 PM",
+            "phone": "+57 301 793 1079",
+            "whatsapp": "https://api.whatsapp.com/send?phone=573017931079",
+            "tag": "bogota",
+            "lat": 4.7066,
+            "lng": -74.1227
+        },
+        {
+            "id": 8,
+            "name": "Villa del Prado",
+            "address": "Cl. 174a #54C - 06, Bogotá",
+            "hours": "Lun - Dom: 11:00 AM - 10:00 PM",
+            "phone": "+57 313 486 7097",
+            "whatsapp": "https://api.whatsapp.com/send?phone=573134867097",
+            "tag": "bogota",
+            "lat": 4.7548,
+            "lng": -74.0535
+        },
+        {
+            "id": 9,
+            "name": "Centro",
+            "address": "Cra. 7 #19-03, Bogotá, Colombia",
+            "hours": "Lun - Dom: 10:00 AM - 10:00 PM",
+            "phone": "+57 322 355 1610",
+            "whatsapp": "https://api.whatsapp.com/send?phone=573223551610",
+            "tag": "bogota",
+            "lat": 4.6038,
+            "lng": -74.0722
+        },
+        {
+            "id": 10,
+            "name": "Miami",
+            "address": "Miami, Florida, USA",
+            "hours": "Mon - Sun: 11:00 AM - 10:00 PM",
+            "phone": "+1 305 000 0000",
+            "whatsapp": "https://api.whatsapp.com/send?phone=13050000000",
+            "tag": "international",
+            "flag": "US",
+            "lat": 25.7617,
+            "lng": -80.1918
+        },
+        {
+            "id": 11,
+            "name": "Medellin",
+            "address": "Medellín, Antioquia, Colombia",
+            "hours": "Próximamente",
+            "phone": "",
+            "whatsapp": "",
+            "tag": "proximamente",
+            "lat": 6.2442,
+            "lng": -75.5812
+        }
+    ],
+    "contact": {
+        "mainPhone": "573005946797",
+        "email": "hola@salchipaperiadc.com",
+        "instagram": "https://instagram.com/salchipaperiadc",
+        "facebook": "https://facebook.com/salchipaperiadc"
+    }
+}

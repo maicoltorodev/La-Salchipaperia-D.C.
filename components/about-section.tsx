@@ -61,7 +61,7 @@ export function AboutSection() {
             <div className="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] shadow-2xl">
               <Image
                 src="/images/restaurant-interior.webp"
-                alt="Interior del restaurante Salchipaperia D.C."
+                alt="Interior del restaurante La Salchipaperia D.C."
                 fill
                 className="object-cover transition-transform duration-1000 hover:scale-110"
               />

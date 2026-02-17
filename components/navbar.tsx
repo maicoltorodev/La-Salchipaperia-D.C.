@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Menu, X, MapPin, Phone } from "lucide-react"
+import restaurantData from "@/data/restaurant-info.json"
 
 const navLinks = [
   { label: "Inicio", href: "#inicio" },
@@ -36,7 +37,7 @@ export function Navbar() {
           <div className="relative h-12 w-12 overflow-hidden rounded-full ring-2 ring-primary/20">
             <Image
               src="/images/logo.jpg"
-              alt="Salchipaperia D.C. Logo"
+              alt="La Salchipaperia D.C. Logo"
               fill
               className="object-cover"
             />
@@ -69,10 +70,10 @@ export function Navbar() {
             className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-muted-foreground uppercase transition-colors hover:text-primary"
           >
             <MapPin className="h-4 w-4 text-primary" />
-            <span>10+ Sedes</span>
+            <span>{restaurantData.locations.length}+ Sedes</span>
           </a>
           <a
-            href="https://wa.me/573005946797"
+            href={`https://wa.me/${restaurantData.contact.mainPhone}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-black uppercase tracking-widest text-primary-foreground transition-all duration-300 hover:scale-105 active:scale-95 glow-yellow"
@@ -115,7 +116,7 @@ export function Navbar() {
             ))}
 
             <a
-              href="https://wa.me/573005946797"
+              href={`https://wa.me/${restaurantData.contact.mainPhone}`}
               onClick={() => setIsMobileMenuOpen(false)}
               className="mt-4 flex w-full items-center justify-center gap-3 rounded-2xl bg-primary p-6 text-sm font-black uppercase tracking-[0.2em] text-primary-foreground shadow-2xl glow-yellow active:scale-95 transition-all"
             >
@@ -125,7 +126,7 @@ export function Navbar() {
 
             <div className="mt-8 flex justify-center gap-6">
               <div className="flex flex-col items-center">
-                <span className="text-2xl font-black text-foreground">10</span>
+                <span className="text-2xl font-black text-foreground">{restaurantData.locations.length}</span>
                 <span className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase text-center">Sedes</span>
               </div>
               <div className="h-10 w-px bg-white/10" />

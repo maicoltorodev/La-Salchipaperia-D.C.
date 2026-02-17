@@ -41,7 +41,7 @@ export function ExperienceSection() {
           <h2 className="mb-4 text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
             <span className="text-balance">
               {"La Experiencia "}
-              <span className="text-gradient">{"Salchipaperia D.C."}</span>
+              <span className="text-gradient">{"La Salchipaperia D.C."}</span>
             </span>
           </h2>
           <p className="max-w-2xl text-lg text-muted-foreground">
