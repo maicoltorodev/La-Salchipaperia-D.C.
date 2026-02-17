@@ -16,6 +16,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.lasalchipaperiadc.com'),
   title: "La Salchipaperia D.C. | La Salchipapa Premium",
   description:
     "La Salchipaperia D.C. La experiencia premium de salchipapas. 9 sedes en Bogota, Miami y proximamente Medellin.",
@@ -30,6 +31,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: "La Salchipaperia D.C. | La Salchipapa Premium",
     description: "La experiencia premium de salchipapas en Bogotá, Miami y Medellín.",
+    url: "https://www.lasalchipaperiadc.com",
+    siteName: "La Salchipaperia D.C.",
+    locale: "es_CO",
+    type: "website",
     images: [
       {
         url: "/imagen-metadata.jpg",
@@ -44,6 +49,10 @@ export const metadata: Metadata = {
     title: "La Salchipaperia D.C. | La Salchipapa Premium",
     description: "La experiencia premium de salchipapas en Bogotá, Miami y Medellín.",
     images: ["/imagen-metadata.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 }
 

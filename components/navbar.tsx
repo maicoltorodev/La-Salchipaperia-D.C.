@@ -16,12 +16,56 @@ const navLinks = [
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [nearestLocation, setNearestLocation] = useState<any>(null)
+  const [isLocating, setIsLocating] = useState(false)
+
+  // Haversine formula
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const R = 6371
+    const dLat = (lat2 - lat1) * (Math.PI / 180)
+    const dLon = (lon2 - lon1) * (Math.PI / 180)
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2)
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+    return R * c
+  }
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50)
     }
     window.addEventListener("scroll", handleScroll)
+
+    // Find nearest location on mount
+    if (navigator.geolocation) {
+      setIsLocating(true)
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude: userLat, longitude: userLng } = position.coords
+          let closest = restaurantData.locations[0]
+          let minDistance = Infinity
+
+          restaurantData.locations.forEach((loc: any) => {
+            if (loc.lat && loc.lng) {
+              const dist = calculateDistance(userLat, userLng, loc.lat, loc.lng)
+              if (dist < minDistance) {
+                minDistance = dist
+                closest = loc
+              }
+            }
+          })
+          setNearestLocation(closest)
+          setIsLocating(false)
+        },
+        () => {
+          setIsLocating(false)
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+      )
+    }
+
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
@@ -73,13 +117,13 @@ export function Navbar() {
             <span>{restaurantData.locations.length}+ Sedes</span>
           </a>
           <a
-            href={`https://wa.me/${restaurantData.contact.mainPhone}`}
+            href={nearestLocation ? `tel:${nearestLocation.phone.replace(/\s+/g, '')}` : `https://wa.me/${restaurantData.contact.mainPhone}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-black uppercase tracking-widest text-primary-foreground transition-all duration-300 hover:scale-105 active:scale-95 glow-yellow"
           >
-            <Phone className="h-4 w-4" />
-            Pedir Ya
+            <Phone className={`h-4 w-4 ${isLocating ? 'animate-pulse' : ''}`} />
+            {isLocating ? "Buscando..." : nearestLocation ? `Llamar ${nearestLocation.name}` : "Pedir Ya"}
           </a>
         </div>
 
@@ -116,12 +160,12 @@ export function Navbar() {
             ))}
 
             <a
-              href={`https://wa.me/${restaurantData.contact.mainPhone}`}
+              href={nearestLocation ? `tel:${nearestLocation.phone.replace(/\s+/g, '')}` : `https://wa.me/${restaurantData.contact.mainPhone}`}
               onClick={() => setIsMobileMenuOpen(false)}
               className="mt-4 flex w-full items-center justify-center gap-3 rounded-2xl bg-primary p-6 text-sm font-black uppercase tracking-[0.2em] text-primary-foreground shadow-2xl glow-yellow active:scale-95 transition-all"
             >
-              <Phone className="h-5 w-5" />
-              Ordenar Ahora
+              <Phone className={`h-5 w-5 ${isLocating ? 'animate-pulse' : ''}`} />
+              {isLocating ? "Buscando tu sede..." : nearestLocation ? `Llamar a ${nearestLocation.name}` : "Ordenar Ahora"}
             </a>
 
             <div className="mt-8 flex justify-center gap-6">
