@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import Image from "next/image"
 import {
   Flame,
   Star,
@@ -698,55 +699,63 @@ export function MenuSection() {
         )}
 
         {/* Menu Grid - Highly Animated */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {displayItems.map((item, idx) => (
             <div
               key={item.id}
-              className="scroll-reveal glass-card group relative flex flex-col overflow-hidden rounded-[2rem] p-6 transition-all duration-500 hover:scale-[1.03] hover:bg-white/10"
+              className="scroll-reveal glass-card group relative flex flex-col overflow-hidden rounded-[2.5rem] p-0 transition-all duration-500 hover:scale-[1.02] hover:bg-white/10"
               style={{ transitionDelay: `${idx * 50}ms` }}
             >
-              {/* Top row: Badge + Price */}
-              <div className="mb-6 flex items-center justify-between">
-                {item.id % 2 === 0 ? (
-                  <div className="flex -space-x-1">
-                    {[1, 2, 3].map(i => (
-                      <div key={i} className="h-1 w-4 rounded-full bg-primary/20" />
-                    ))}
-                  </div>
-                ) : <div />}
+              {/* Product Image Holder */}
+              <div className="relative aspect-[4/3] w-full overflow-hidden">
+                <Image
+                  src="/images/salchipapa.webp"
+                  alt={item.name}
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
 
-                <span className="text-xl font-black tracking-tighter text-primary sm:text-2xl">
-                  {item.price}
-                </span>
+                {/* Price Badge on Image */}
+                <div className="absolute top-5 right-5 z-10">
+                  <div className="rounded-2xl bg-primary/95 px-4 py-2 font-black tracking-tighter text-primary-foreground shadow-2xl backdrop-blur-md">
+                    <span className="text-lg">{item.price}</span>
+                  </div>
+                </div>
+
+                {/* Status Badge on Image */}
+                {item.badge && (
+                  <div className="absolute top-5 left-5 z-10">
+                    <div className={`${item.badgeColor} rounded-full px-3 py-1.5 text-[9px] font-black uppercase tracking-widest shadow-xl`}>
+                      {item.badge}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Content */}
-              <div className="flex flex-1 flex-col">
-                <div className="mb-2 flex items-center gap-2">
-                  <h4 className="text-xl font-black tracking-tight text-foreground group-hover:text-primary transition-colors">
+              {/* Content Container */}
+              <div className="flex flex-1 flex-col p-6 pt-2">
+                <div className="mb-3">
+                  <h4 className="text-2xl font-black tracking-tight text-foreground transition-colors group-hover:text-primary">
                     {item.name}
                   </h4>
-                  {item.badge && (
-                    <span className={`rounded-full px-2 py-0.5 text-[8px] font-black uppercase ${item.badgeColor}`}>
-                      {item.badge}
-                    </span>
-                  )}
                 </div>
+
                 <p className="mb-6 flex-1 text-sm leading-relaxed text-muted-foreground/80">
                   {item.description}
                 </p>
 
                 <button
                   onClick={() => addItem(item)}
-                  className="flex w-full items-center justify-center gap-2 rounded-[1rem] bg-secondary/50 py-3 text-xs font-black uppercase tracking-widest text-foreground transition-all duration-300 hover:bg-primary hover:text-primary-foreground group-active:scale-95"
+                  className="group/btn relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-[1.2rem] bg-secondary/50 py-4 text-xs font-black uppercase tracking-widest text-foreground transition-all duration-300 hover:bg-primary hover:text-primary-foreground active:scale-95"
                 >
-                  <Plus className="h-4 w-4" />
-                  Lo quiero
+                  <Plus className="h-4 w-4 transition-transform group-hover/btn:rotate-90" />
+                  <span>Agregar al pedido</span>
                 </button>
               </div>
 
               {/* Decorative accent */}
-              <div className="absolute top-0 right-0 h-16 w-16 bg-gradient-to-br from-primary/10 to-transparent blur-2xl" />
+              <div className="absolute top-0 right-0 h-24 w-24 bg-gradient-to-br from-primary/5 to-transparent blur-3xl" />
             </div>
           ))}
         </div>
