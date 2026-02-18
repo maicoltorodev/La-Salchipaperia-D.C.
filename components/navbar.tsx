@@ -77,63 +77,95 @@ export function Navbar() {
         }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
-        <a href="#inicio" className="flex items-center gap-3 transition-transform hover:scale-105 active:scale-95">
-          <div className="relative h-12 w-12 overflow-hidden rounded-full ring-2 ring-primary/20">
-            <Image
-              src="/images/logo.jpg"
-              alt="La Salchipaperia D.C. Logo"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-lg font-black leading-none tracking-tighter text-foreground sm:text-xl">
-              {"La Salchipaperia"}
-            </span>
-            <span className="text-xs font-bold leading-none tracking-widest text-primary uppercase">
-              D.C.
-            </span>
-          </div>
-        </a>
-
-        <nav className="hidden items-center gap-8 md:flex">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-xs font-black tracking-widest text-muted-foreground uppercase transition-all duration-300 hover:text-primary hover:scale-110"
+        {/* --- DESKTOP LAYOUT (md+) --- */}
+        <div className="hidden items-center gap-6 md:flex">
+          <a href="#inicio" className="group flex items-center gap-4 transition-transform hover:scale-105 active:scale-95">
+            <div className="relative h-10 w-10">
+              <Image src="/logo-navbar.webp" alt="Logo" fill className="object-contain" />
+            </div>
+            <span
+              className="text-2xl leading-none text-primary uppercase lg:text-3xl"
+              style={{
+                fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+                transform: 'scaleX(1.1) scaleY(1.2)',
+                display: 'inline-block',
+                letterSpacing: '0.04em',
+                textShadow: '0.2px 0 0.1px currentColor'
+              }}
             >
-              {link.label}
-            </a>
-          ))}
-        </nav>
+              {"La Salchipaperia D.C."}
+            </span>
+          </a>
+          <nav className="ml-8 flex items-center gap-6">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-[10px] font-black tracking-widest text-muted-foreground uppercase transition-all hover:text-primary hover:scale-110"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+        </div>
 
+        {/* --- MOBILE LAYOUT (<md) --- */}
+        <div className="grid w-full grid-cols-3 items-center md:hidden">
+          {/* Left: Logo */}
+          <div className="flex justify-start">
+            <a href="#inicio" className="group relative h-8 w-8 -translate-y-1 transition-all active:scale-95">
+              <Image src="/logo-navbar.webp" alt="Logo" fill className="object-contain" />
+            </a>
+          </div>
+
+          {/* Center: Brand Text */}
+          <div className="flex justify-center">
+            <a href="#inicio" className="active:scale-95">
+              <span
+                className="whitespace-nowrap text-2xl leading-none text-primary uppercase"
+                style={{
+                  fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+                  transform: 'scaleX(1.1) scaleY(1.2)',
+                  display: 'inline-block',
+                  letterSpacing: '0.08em',
+                  textShadow: '0.2px 0 0.1px currentColor'
+                }}
+              >
+                {"La Salchipaperia D.C."}
+              </span>
+            </a>
+          </div>
+
+          {/* Right: Hamburger */}
+          <div className="flex justify-end">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="group flex h-10 w-10 -translate-y-1 items-center justify-end active:scale-95"
+            >
+              <Menu className="h-7 w-7 text-primary" />
+            </button>
+          </div>
+        </div>
+
+        {/* --- DESKTOP ACTIONS (Right side) --- */}
         <div className="hidden items-center gap-4 md:flex">
           <a
             href="#sedes"
             className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-muted-foreground uppercase transition-colors hover:text-primary"
           >
             <MapPin className="h-4 w-4 text-primary" />
-            <span>{restaurantData.locations.length}+ Sedes</span>
+            <span>Sedes</span>
           </a>
           <a
             href={nearestLocation ? `tel:${nearestLocation.phone.replace(/\s+/g, '')}` : `https://wa.me/${restaurantData.contact.mainPhone}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-black uppercase tracking-widest text-primary-foreground transition-all duration-300 hover:scale-105 active:scale-95 glow-yellow"
+            className="flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-primary-foreground transition-all hover:scale-105 active:scale-95 glow-yellow"
           >
-            <Phone className={`h-4 w-4 ${isLocating ? 'animate-pulse' : ''}`} />
-            {isLocating ? "Buscando..." : nearestLocation ? `Llamar ${nearestLocation.name}` : "Pedir Ya"}
+            <Phone className="h-3.5 w-3.5" />
+            {isLocating ? "..." : "Pedir Ya"}
           </a>
         </div>
-
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/5 md:hidden"
-          aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
-        >
-          {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
       </div>
 
       {/* Mobile Menu - Fullscreen style or slide down */}

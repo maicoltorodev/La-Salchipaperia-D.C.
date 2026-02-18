@@ -30,15 +30,27 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-5">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <div className="mb-4 flex items-center gap-3">
-              <Image
-                src="/images/logo.jpg"
-                alt="La Salchipaperia D.C. Logo"
-                width={44}
-                height={44}
-                className="rounded-full"
-              />
-              <span className="text-xl font-bold text-foreground">{"La Salchipaperia D.C."}</span>
+            <div className="mb-6 flex items-center gap-4">
+              <div className="relative h-10 w-10">
+                <Image
+                  src="/logo-navbar.webp"
+                  alt="La Salchipaperia D.C. Logo"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <span
+                className="text-2xl leading-none text-primary uppercase"
+                style={{
+                  fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+                  transform: 'scaleX(1.1) scaleY(1.2)',
+                  display: 'inline-block',
+                  letterSpacing: '0.04em',
+                  textShadow: '0.2px 0 0.1px currentColor'
+                }}
+              >
+                {"La Salchipaperia D.C."}
+              </span>
             </div>
             <p className="mb-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
               {"La experiencia premium de salchipapas. 9 sedes en Bogota, presencia en Miami y proximamente en Medellin."}
