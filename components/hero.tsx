@@ -38,7 +38,7 @@ export function Hero() {
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 pt-20 pb-16 sm:py-32">
-        <div className={`flex flex-col items-start gap-6 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className={`flex flex-col items-center text-center sm:items-start sm:text-left gap-6 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           {/* Badge */}
           <div className="sparkle-border flex items-center gap-2 rounded-full px-4 py-2 animate-float">
             <Sparkles className="h-4 w-4 text-primary" />
@@ -59,33 +59,33 @@ export function Hero() {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex w-full flex-col gap-4 sm:w-auto sm:flex-row sm:items-center">
+          <div className="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row sm:items-center">
             <a
               href="#menu"
-              className="group flex items-center justify-center gap-2 rounded-full bg-primary px-10 py-5 text-base font-black text-primary-foreground shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 glow-yellow"
+              className="group flex w-full items-center justify-center gap-2 rounded-full bg-primary px-10 py-5 text-base font-black text-primary-foreground shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 glow-yellow sm:w-auto"
             >
               Ver Menú
               <ArrowDown className="h-4 w-4 transition-transform group-hover:translate-y-1" />
             </a>
             <a
               href="#sedes"
-              className="flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-10 py-5 text-base font-black text-foreground backdrop-blur-md transition-all duration-300 hover:bg-white/10 hover:scale-105 active:scale-95"
+              className="flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-10 py-5 text-base font-black text-foreground backdrop-blur-md transition-all duration-300 hover:bg-white/10 hover:scale-105 active:scale-95 sm:w-auto"
             >
               Encuentra tu Sede
             </a>
           </div>
 
           {/* Stats - Optimized for mobile layout */}
-          <div className="mt-12 grid grid-cols-3 gap-4 sm:flex sm:gap-12">
-            <div className="flex flex-col">
+          <div className="mt-12 grid w-full grid-cols-3 gap-4 sm:w-auto sm:flex sm:gap-12">
+            <div className="flex flex-col items-center sm:items-start">
               <p className="text-3xl font-black text-primary sm:text-4xl">10</p>
               <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase sm:text-xs">Sedes</p>
             </div>
-            <div className="flex flex-col border-l border-white/10 pl-4 sm:pl-12">
+            <div className="flex flex-col items-center border-l border-white/10 pl-4 sm:items-start sm:pl-12">
               <p className="text-3xl font-black text-foreground sm:text-4xl">50K+</p>
               <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase sm:text-xs">Clientes</p>
             </div>
-            <div className="flex flex-col border-l border-white/10 pl-4 sm:pl-12">
+            <div className="flex flex-col items-center border-l border-white/10 pl-4 sm:items-start sm:pl-12">
               <p className="text-3xl font-black text-accent sm:text-4xl">20+</p>
               <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase sm:text-xs">Variedades</p>
             </div>

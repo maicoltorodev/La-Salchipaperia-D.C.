@@ -10,6 +10,8 @@ import {
   Plus,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   UtensilsCrossed,
   Dog,
   Drumstick,
@@ -531,6 +533,20 @@ export function MenuSection() {
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({})
   const tabsRef = useRef<HTMLDivElement>(null)
 
+  const currentIndex = menuData.findIndex((c) => c.id === activeCategory)
+
+  const nextCategory = () => {
+    const nextIndex = (currentIndex + 1) % menuData.length
+    setActiveCategory(menuData[nextIndex].id)
+    setExpandedItems({})
+  }
+
+  const prevCategory = () => {
+    const prevIndex = (currentIndex - 1 + menuData.length) % menuData.length
+    setActiveCategory(menuData[prevIndex].id)
+    setExpandedItems({})
+  }
+
   const activeData = menuData.find((c) => c.id === activeCategory)
 
   const toggleExpand = (catId: string) => {
@@ -593,11 +609,12 @@ export function MenuSection() {
           </p>
         </div>
 
-        {/* Category Tabs - Ultra Mobile Optimized */}
+        {/* Category Selector - Mobile Carousel / Desktop Grid */}
         <div className="scroll-reveal relative mb-16" style={{ transitionDelay: '200ms' }}>
+          {/* Desktop View: Grid/Scroll */}
           <div
             ref={tabsRef}
-            className="no-scrollbar flex gap-3 overflow-x-auto px-1 pb-4 sm:flex-wrap sm:justify-center sm:overflow-visible"
+            className="hidden sm:flex no-scrollbar flex-wrap justify-center gap-3 px-1 pb-4"
           >
             {menuData.map((cat) => (
               <button
@@ -622,15 +639,50 @@ export function MenuSection() {
               </button>
             ))}
           </div>
-          {/* Mobile indicator shadows */}
-          <div className="pointer-events-none absolute top-0 left-0 h-full w-8 bg-gradient-to-r from-background to-transparent sm:hidden" />
-          <div className="pointer-events-none absolute top-0 right-0 h-full w-8 bg-gradient-to-l from-background to-transparent sm:hidden" />
+
+          {/* Mobile View: Carousel with Arrows */}
+          <div className="flex items-center justify-between gap-4 sm:hidden">
+            <button
+              onClick={prevCategory}
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full glass-card text-primary transition-all active:scale-90"
+              aria-label="Anterior categoría"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </button>
+
+            <div className="relative flex-1 overflow-hidden">
+              <div className="flex justify-center transition-all duration-500">
+                {activeData && (
+                  <div
+                    key={activeCategory}
+                    className="flex animate-in fade-in slide-in-from-right-4 items-center gap-3 rounded-[1.2rem] bg-primary px-6 py-4 text-xs font-black tracking-wider uppercase text-primary-foreground shadow-[0_10px_30px_rgba(245,197,24,0.4)] w-full justify-center"
+                  >
+                    <div className="text-primary-foreground">
+                      {activeData.icon}
+                    </div>
+                    <span>{activeData.label}</span>
+                    <span className="ml-1 rounded-full bg-black/20 px-2 py-0.5 text-[10px]">
+                      {activeData.items.length}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <button
+              onClick={nextCategory}
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full glass-card text-primary transition-all active:scale-90"
+              aria-label="Siguiente categoría"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </button>
+          </div>
         </div>
 
         {/* Active Category Header */}
         {activeData && (
           <div className="scroll-reveal mb-12 flex flex-col items-center gap-3 text-center" style={{ transitionDelay: '300ms' }}>
-            <h3 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
+            <h3 className="hidden sm:block text-3xl font-black tracking-tight text-foreground sm:text-4xl">
               {activeData.label}
             </h3>
             <p className="max-w-xl text-sm italic text-muted-foreground">{activeData.subtitle}</p>
